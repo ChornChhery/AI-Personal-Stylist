@@ -200,7 +200,7 @@ We welcome contributions! Areas where you can help:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Chhery Chorn License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -216,3 +216,160 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Upload your photo and let our AI stylist guide you to fashion confidence! 💫
 
 *Made with ❤️ for K-fashion lovers worldwide*
+
+
+
+
+# Korean Fashion AI Stylist - Week 1-2 Development Plan
+
+## 🎯 Week 1-2 Goals
+- Set up project structure and environment
+- Implement basic face detection and analysis
+- Create skin tone detection algorithm
+- Build face shape classification system
+- Test with sample images and validate results
+
+## 📅 Daily Breakdown
+
+### **Day 1-2: Project Setup & Environment**
+- [ ] Create project directory structure
+- [ ] Set up virtual environment
+- [ ] Install required libraries
+- [ ] Create basic project files
+- [ ] Test installation with simple OpenCV example
+
+### **Day 3-4: Face Detection Foundation**
+- [ ] Implement basic face detection using OpenCV
+- [ ] Add MediaPipe face mesh for detailed landmarks
+- [ ] Create face cropping and preprocessing functions
+- [ ] Test with multiple face images
+
+### **Day 5-7: Face Shape Analysis**
+- [ ] Calculate key facial measurements
+- [ ] Implement face shape classification algorithm
+- [ ] Create face shape categories (oval, round, square, heart, diamond)
+- [ ] Test and validate with sample images
+
+### **Day 8-10: Skin Tone Detection**
+- [ ] Implement skin tone extraction from face region
+- [ ] Create color analysis algorithm
+- [ ] Classify undertones (cool, warm, neutral)
+- [ ] Generate seasonal color palette
+
+### **Day 11-14: Integration & Testing**
+- [ ] Combine face shape and skin tone analysis
+- [ ] Create simple web interface with Streamlit
+- [ ] Add image upload functionality
+- [ ] Test entire pipeline with various images
+- [ ] Debug and optimize performance
+
+## 📁 Project Structure
+
+```
+korean_fashion_ai/
+├── README.md
+├── requirements.txt
+├── app.py                          # Main Streamlit app
+├── config/
+│   └── settings.py                 # Configuration settings
+├── src/
+│   ├── __init__.py
+│   ├── face_analysis/
+│   │   ├── __init__.py
+│   │   ├── face_detector.py        # Face detection logic
+│   │   ├── face_shape.py           # Face shape analysis
+│   │   └── skin_tone.py            # Skin tone detection
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── image_utils.py          # Image processing utilities
+│   │   └── color_utils.py          # Color analysis utilities
+│   └── korean_fashion/
+│       ├── __init__.py
+│       └── style_matcher.py        # Korean style matching (Week 3-4)
+├── data/
+│   ├── test_images/                # Sample images for testing
+│   └── color_palettes/             # Color palette data
+├── models/                         # Saved models (future)
+├── static/                         # CSS and assets for Streamlit
+└── tests/
+    ├── __init__.py
+    └── test_face_analysis.py       # Unit tests
+```
+
+## 🛠️ Technical Implementation Details
+
+### Required Libraries
+```python
+opencv-python==4.8.1.78
+mediapipe==0.10.3
+numpy==1.24.3
+pillow==10.0.1
+streamlit==1.28.1
+matplotlib==3.7.2
+seaborn==0.12.2
+scikit-learn==1.3.0
+pandas==2.0.3
+colorthief==0.2.1
+```
+
+### Key Algorithms to Implement
+
+#### 1. Face Shape Classification
+```python
+# Measurements needed:
+- Face width-to-height ratio
+- Jawline angle
+- Cheekbone width
+- Forehead width
+- Chin width and shape
+```
+
+#### 2. Skin Tone Analysis
+```python
+# Color extraction points:
+- Forehead center
+- Both cheeks
+- Nose bridge
+- Chin area
+- Under-eye area
+```
+
+### Expected Deliverables by End of Week 2
+
+1. **Working face detection system** that can identify faces in uploaded images
+2. **Face shape classifier** that determines one of 5 face shapes with confidence score
+3. **Skin tone analyzer** that extracts dominant skin color and determines undertones
+4. **Basic web interface** where users can upload photos and get analysis results
+5. **Test suite** with sample images showing accurate results
+
+## 🎨 Week 1-2 User Interface Preview
+
+The Streamlit app should include:
+- **Photo Upload Area**: Drag & drop or file selection
+- **Analysis Results Panel**: 
+  - Detected face with landmarks
+  - Face shape classification with confidence
+  - Skin tone color palette
+  - Undertone determination
+- **Debug Info**: Processing steps and measurements (toggleable)
+
+## 📊 Success Metrics for Week 1-2
+
+- [ ] Face detection works on 95%+ of clear face photos
+- [ ] Face shape classification achieves reasonable accuracy on test images
+- [ ] Skin tone detection produces consistent results across different lighting
+- [ ] Web interface is responsive and user-friendly
+- [ ] Processing time under 3 seconds per image
+- [ ] No crashes or errors with various image formats
+
+## 🚀 Ready to Start?
+
+Let's begin with Day 1-2: Project Setup! I'll help you create each file step by step.
+
+**Next Steps:**
+1. First, let's set up the project structure and requirements.txt
+2. Then create the basic face detection functionality
+3. Build upon that with face shape and skin tone analysis
+4. Finally, integrate everything into a working Streamlit app
+
+Are you ready to start coding? Let me know and I'll guide you through creating the first files!

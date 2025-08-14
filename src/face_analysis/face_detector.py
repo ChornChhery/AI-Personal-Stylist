@@ -120,27 +120,155 @@ class FaceDetector:
         if not results.detections:
             return None
         
-        # Get the first (most confident) face detection result
-        detection = results.detections[0]
-
-        # Extract bounding box coordinates
-        bbox = detection.location_data.relative_bounding_box
+        # Get landmarks for the first face
+        face_landmarks = results.multi_face_landmarks[0]
         h, w, _ = image.shape
 
-        # Convert relative coordinates to absolute pixel coordinates
-        x = int(bbox.xmin * w)
-        y = int(bbox.ymin * h)
-        width = int(bbox.width * w)
-        height = int(bbox.height * h)
+        # Convert normalized coordinates to pixel coordinates
+        landmarks = {}
 
-        # Ensure bounding box is within image bounds
-        x = max(0, x)
-        y = max(0, y)
-        width = min(width, w - x)
-        height = min(height, h - y)
+        for name, indices in self.landmark_indices.items():
+            landmarks[name] = []
+            for idx in indices:
+                if idx < len(face_landmarks.landmark):
+                    landmark = face_landmarks.landmark[idx]
+                    x = int(landmark.x * w)
+                    y = int(landmark.y * h)
+                    landmarks[name].append((x, y))
+
+        # Add all landmarks as raw data for detailed analysis
+        all_landmarks = []
+        for landmark in face_landmarks.landmark:
+            x = int(landmark.x * w)
+            y = int(landmark.y * h)
+            all_landmarks.append((x, y))
+            
+        landmarks['all'] = all_landmarks
+
+        return landmarks
+    
+    def crop_face(self, image: np.ndarray, padding: float = 0.2) -> Optional[Tuple[np.ndarray, Dict]]:
+        """
+        Crop face region from image with padding
+        
+        Args:
+            image: Input image as numpy array
+            padding: Additional padding around face (0.0 to 1.0)
+            
+        Returns:
+            Tuple of (cropped_face, face_info) or None if no face found
+        """
+
+        face_detection = self.detect_face(image)
+
+        if not face_detection:
+            return None
+    
+        x, y, width, height = face_detection['bbox']
+
+        # Add padding
+        pad_x = int(width * padding)
+        pad_y = int(height * padding)
+
+        # Calculate expanded bounding box
+        x_start = max(0, x-pad_x)
+        y_start = max(0, y-pad_y)
+        x_end = min(image.shape[1], x+ width + pad_x)
+        y_end = min(image.shape[0], y + height + pad_y)
+
+
+        # Crop the face region
+        cropped_face = image[y_start:y_end, x_start:x_end]
+
+        # Return cropped face and adjusted coordinates
+        face_info = {
+            'original_bbox': face_detection['bbox'],
+            'cropped_bbox': (x_start, y_start, x_end-x_start, y_end- y_start),
+            'confidence': face_detection['confidence']
+        }
+
+        return cropped_face, face_info
+    
+
+    def analyze_face(self, image: np.ndarry) -> Optional[Dict]:
+        """
+        Complete face analysis including detection, landmarks, and cropping
+        
+        Args:
+            image: Input image as numpy array
+            
+        Returns:
+            Complete face analysis results
+        """
+
+        # Detect face and extract landmarks
+        face_detection = self.detect_face(image)
+        if not face_detection:
+            return None
+        
+        # Extract landmarks
+        landmarks = self.extract_landmarks(image)
+        if not landmarks:
+            return None
+
+        # Crop face
+        crop_result = self.crop_face(image)
+        if not crop_result:
+            return None
+        
+        cropped_face, face_info = crop_result
 
         return {
-            'bbox': (x,y,width, height),
-            'confidence': detection.score[0],
-            'relative_bbox': (bbox.xmin, bbox.ymin, bbox.width, bbox.height)
+            'detection': face_detection,
+            'landmarks': landmarks,
+            'cropped_face': cropped_face,
+            'face_info': face_info,
+            'original_shape': image.shape
         }
+    
+    def draw_landmarks(self, image: np.ndarray, landmarks: Dict, colors: Dict = None) -> np.ndarray:
+        """
+        Draw facial landmarks on image for visualization
+        
+        Args:
+            image: Input image
+            landmarks: Landmark coordinates
+            colors: Colors for different landmark groups
+            
+        Returns:
+            Image with drawn landmarks
+        """
+
+        if colors is None:
+            colors = {
+                'face_oval': (255, 0, 0),      # Red
+                'left_eye': (0, 255, 0),       # Green
+                'right_eye': (0, 255, 0),      # Green
+                'nose': (0, 0, 255),           # Blue
+                'mouth': (255, 255, 0),        # Yellow
+                'jawline': (255, 0, 255),      # Magenta
+                'forehead': (0, 255, 255)      # Cyan
+            }
+
+        result_image = image.copy()
+
+        for landmark_name, points in landmarks.items():
+            if landmark_name == 'all':
+                continue  # Skip raw landmarks for drawing
+
+            color = colors.get(landmark_name, (128,128,128))
+
+            for point in points:
+                cv2.circle(result_image, point, 2, color, -1)
+
+            return result_image
+        
+
+    def __del__(self):
+        """Clean up resources"""
+
+        if hasattr(self, 'face_detection'):
+            self.face_detection.close()
+
+        if hasattr(self, 'face_mesh'):
+            self.face_mesh.close()

@@ -1,7 +1,7 @@
+venv/
 venv310/
 __pycache__/
 *.pyc
 .DS_Store
 .env
 *.pkl
-venv/

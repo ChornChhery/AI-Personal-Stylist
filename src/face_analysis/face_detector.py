@@ -190,7 +190,7 @@ class FaceDetector:
         return cropped_face, face_info
     
 
-    def analyze_face(self, image: np.ndarry) -> Optional[Dict]:
+    def analyze_face(self, image: np.ndarray) -> Optional[Dict]:
         """
         Complete face analysis including detection, landmarks, and cropping
         

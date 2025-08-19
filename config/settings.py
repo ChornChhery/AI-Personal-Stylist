@@ -66,7 +66,7 @@ KOREAN_COLOR_PALETTES = {
 }
 
 # Streamlit UI Settings
-STEAMLIT_CONFIG = {
+STREAMLIT_CONFIG = {
     'page_title': PROJECT_NAME,
     'page_icon': '🎨',
     'layout': 'wide',
